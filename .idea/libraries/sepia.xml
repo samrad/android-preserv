@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="sepia">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../sepia.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../sepia.jar!/" />
+    </SOURCES>
+  </library>
+</component>
