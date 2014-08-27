@@ -74,8 +74,8 @@
     <orderEntry type="library" exported="" name="support-v4-19.1.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-4.3.23" level="project" />
     <orderEntry type="library" exported="" name="android-maps-utils-0.3.1" level="project" />
-    <orderEntry type="library" exported="" name="msgpack-0.6.2" level="project" />
-    <orderEntry type="library" exported="" name="sepia" level="project" />
+    <orderEntry type="library" name="msgpack-0.6.2" level="project" />
+    <orderEntry type="library" name="sepia" level="project" />
   </component>
 </module>
 

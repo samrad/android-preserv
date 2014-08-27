@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="msgpack-0.6.2">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../msgpack-0.6.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/preserv/libs/msgpack-0.6.2.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

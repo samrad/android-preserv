@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import de.rwth.comsys.samrad.preserv.connectivity.JSONDownloader;
 import org.msgpack.MessagePack;
 import mpc.ShamirSharing;
+import com.google.maps.android.PolyUtil;
 
 
 public class MainActivity extends Activity {
@@ -14,6 +16,9 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_layout);
+
+        final JSONDownloader d = new JSONDownloader(this);
+        d.execute("http://preserv-samrad.rhcloud.com/monkey");
     }
 
 
