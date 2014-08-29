@@ -1,28 +1,32 @@
 package de.rwth.comsys.samrad.preserv;
 
 import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.google.android.gms.maps.model.LatLng;
 import de.rwth.comsys.samrad.preserv.connectivity.JSONDownloader;
 import de.rwth.comsys.samrad.preserv.model.Poly;
 import de.rwth.comsys.samrad.preserv.utilz.Referable;
 import de.rwth.comsys.samrad.preserv.utilz.Utilz;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.msgpack.MessagePack;
-import mpc.ShamirSharing;
-import com.google.maps.android.PolyUtil;
+import org.msgpack.annotation.Message;
+import org.msgpack.template.Templates;
+import org.msgpack.type.Value;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class MainActivity extends Activity implements Referable {
 
+    private static final String TAG = "MainActivity";
     private List<Poly> mPolyList = new ArrayList<Poly>();
 
     @Override
@@ -30,8 +34,20 @@ public class MainActivity extends Activity implements Referable {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_layout);
 
-        final JSONDownloader d = new JSONDownloader(this, this);
-        d.execute("http://preserv-samrad.rhcloud.com/monkey");
+        // Read the JSON file is it already exists
+        if(jsonExist()) {
+
+            String json = Utilz.readJSON(getFilesDir() + "/polygons.json");
+            onJSONString(json);
+            Log.i(TAG, "Reading from internal storage");
+
+        // Download the JSON otherwise
+        } else if (hasConnectivity()) {
+
+            final JSONDownloader d = new JSONDownloader(this, this);
+            d.execute("http://preserv-samrad.rhcloud.com/monkey");
+            Log.i(TAG, "Reading from server");
+        }
     }
 
 
@@ -58,7 +74,6 @@ public class MainActivity extends Activity implements Referable {
     public void onJSONString(String s) {
         try {
             JSONObject json = new JSONObject(s);
-//            test(json); // TEST
             mPolyList = Utilz.json2Poly(json);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -66,31 +81,25 @@ public class MainActivity extends Activity implements Referable {
 
     }
 
-    private void test(JSONObject json) {
-        try {
+    private boolean hasConnectivity() {
 
-            JSONArray polys = json.getJSONArray("polys");
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
 
-            // For each poly in polys
-            for (int i = 0; i < polys.length(); i++) {
-
-                JSONObject poly = polys.getJSONObject(i);
-                JSONArray vtx = poly.getJSONArray("vtx");
-                Poly p = new Poly(poly.getString("name"));
-
-                // For each object in vtx
-                for (int j = 0; j < vtx.length(); j++) {
-                    JSONObject v = vtx.getJSONObject(j);
-                    p.addVertex(new LatLng(v.getDouble("lat"), v.getDouble("lng")));
-                    Log.d("Fuck", String.valueOf(v.getDouble("lat")));
-                }
-
-                // Add to ploy collection
-                mPolyList.add(p);
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+            Log.i(TAG, "Device has connectivity");
+            return true;
         }
+
+        return false;
     }
+
+    private boolean jsonExist() {
+
+        File file = new File(getFilesDir(), "polygons.json");
+        Log.i(TAG, "File exit? " + String.valueOf(file.exists()));
+        return file.exists();
+    }
+
 }
