@@ -2,12 +2,10 @@ package de.rwth.comsys.samrad.preserv.connectivity;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
+import de.rwth.comsys.samrad.preserv.utilz.Referable;
+import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -20,11 +18,14 @@ import java.net.URL;
 public class JSONDownloader extends AsyncTask<String, Integer, String> {
 
     private static final String TAG = "JSONDownloader";
+    private Referable listener;
     private Context ctx;
+    private String result;
 
-    public JSONDownloader(Context context) {
+    public JSONDownloader(Context ctx, Referable l) {
         super();
-        this.ctx = context;
+        this.ctx      = ctx;
+        this.listener = l;
     }
 
     @Override
@@ -36,12 +37,25 @@ public class JSONDownloader extends AsyncTask<String, Integer, String> {
     protected String doInBackground(String... urls) {
 
         try {
-            String shit = getJSON(urls[0]);
-            Log.d(TAG, shit);
+
+            // Get the JSON and write to a file
+            result = getJSON(urls[0]);
+            File file = new File(ctx.getFilesDir(), "polygons.json");
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(result.getBytes());
+            fos.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+        listener.onJSONString(result);
+
     }
 
     /**
@@ -57,6 +71,7 @@ public class JSONDownloader extends AsyncTask<String, Integer, String> {
         InputStream in = null;
         Reader reader = null;
         StringBuilder sb = null;
+        JSONObject polys = null;
 
         try {
 
@@ -90,14 +105,12 @@ public class JSONDownloader extends AsyncTask<String, Integer, String> {
 
             }
 
-            publishProgress(total);
-            return sb.toString();
-
-
         } finally {
             if (in != null) {
                 in.close();
             }
         }
+
+        return sb.toString();
     }
 }
