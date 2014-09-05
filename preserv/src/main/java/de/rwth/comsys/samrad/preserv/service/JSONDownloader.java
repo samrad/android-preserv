@@ -1,4 +1,4 @@
-package de.rwth.comsys.samrad.preserv.connectivity;
+package de.rwth.comsys.samrad.preserv.service;
 
 import android.content.Context;
 import android.os.AsyncTask;

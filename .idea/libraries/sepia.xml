@@ -4,8 +4,6 @@
       <root url="jar://$PROJECT_DIR$/preserv/libs/sepia.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="jar://$PROJECT_DIR$/preserv/libs/sepia.jar!/" />
-    </SOURCES>
+    <SOURCES />
   </library>
 </component>
