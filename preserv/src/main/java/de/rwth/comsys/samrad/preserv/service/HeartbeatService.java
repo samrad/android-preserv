@@ -47,6 +47,11 @@ public class HeartbeatService extends IntentService {
 
     }
 
+    /**
+     * Set the schedule of the service in AlarmManager
+     * @param context
+     * @param isOn
+     */
     public static void setServiceAlarm(Context context, boolean isOn) {
 
         Log.i(TAG, "Set service alarm @" + SystemClock.elapsedRealtime());
@@ -59,11 +64,11 @@ public class HeartbeatService extends IntentService {
         if (isOn) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
                     System.currentTimeMillis(), BEAT_INTERVAL, pi);
-            Log.i(TAG, "Heartbeat started");
+            Log.i(TAG, "Service schedule set");
         } else {
             alarmManager.cancel(pi);
             pi.cancel();
-            Log.i(TAG, "Heartbeat stopped");
+            Log.i(TAG, "Service schedule unset");
         }
 
         PreferenceManager.getDefaultSharedPreferences(context)

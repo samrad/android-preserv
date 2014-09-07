@@ -15,12 +15,15 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+//        // The Intent to be delivered to service.
+//        Intent service = new Intent(context, HeartbeatService.class);
+//        service.setData(Uri.parse("fuck"));
+
         // The Intent to be delivered to service.
-        Intent service = new Intent(context, HeartbeatService.class);
-        service.setData(Uri.parse("fuck"));
+        Intent service = new Intent(context, PulseService.class);
 
         // Start the service and stay awake till it's finished
-        Log.i("AlarmReceiver", "Starting heartbeat service @ " + SystemClock.elapsedRealtime());
+        Log.i("AlarmReceiver", "Starting service @" + SystemClock.elapsedRealtime());
         startWakefulService(context, service);
     }
 }
