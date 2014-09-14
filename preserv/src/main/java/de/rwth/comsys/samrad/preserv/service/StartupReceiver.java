@@ -6,11 +6,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import de.rwth.comsys.samrad.preserv.R;
 
 /**
  * StartupReceiver triggers when the device completes
- * booting up and it will re-schedule the HeartBeat
- * service.
+ * booting up and it will re-schedule the service.
+ *
  */
 public class StartupReceiver extends BroadcastReceiver {
 
@@ -22,8 +23,8 @@ public class StartupReceiver extends BroadcastReceiver {
         Log.i(TAG, "Received broadcast intent: " + intent.getAction());
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean isOn = prefs.getBoolean(HeartbeatService.PREF_IS_ALARM_ON, false);
-        HeartbeatService.setServiceAlarm(context, isOn);
+        boolean isOn = prefs.getBoolean(context.getString(R.string.is_schedule_on), false);
+        PulseService.setServiceAlarm(context, isOn);
 
     }
 }

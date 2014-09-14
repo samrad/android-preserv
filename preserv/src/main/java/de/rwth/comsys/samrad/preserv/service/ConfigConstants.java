@@ -16,7 +16,7 @@ public class ConfigConstants {
     // A fast frequency ceiling in milliseconds
     public static final long FASTEST_INTERVAL = MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
     // Service pulse frequency in seconds
-    public static final long PULSE_INTERVAL_IN_SECOND = 1;
+    public static final long PULSE_INTERVAL_IN_SECOND = 60;
     // Service pulse frequency in milliseconds
     public static final long PULSE_INTERVAL = MILLISECONDS_PER_SECOND * PULSE_INTERVAL_IN_SECOND;
     // Stores the lat / long pairs in a text file

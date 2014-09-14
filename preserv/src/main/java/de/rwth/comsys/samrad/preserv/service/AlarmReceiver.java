@@ -8,7 +8,9 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
 /**
- * Created by Sam on 9/3/2014.
+ * This broadcast receiver is triggered by AlarmManager
+ * and start the service while keeping the CPU awake.
+ *
  */
 public class AlarmReceiver extends WakefulBroadcastReceiver {
 
@@ -23,7 +25,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         Intent service = new Intent(context, PulseService.class);
 
         // Start the service and stay awake till it's finished
-        Log.i("AlarmReceiver", "Starting service @" + SystemClock.elapsedRealtime());
+        Log.i("ALARM_RECEIVER", "Starting service @" + SystemClock.elapsedRealtime());
         startWakefulService(context, service);
     }
 }

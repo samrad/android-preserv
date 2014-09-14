@@ -56,4 +56,33 @@
         Received an unknown activity request code %1$d in onActivityResult.
     </string>
 
+    <!-- UI -->
+    <string name="text_view_long">Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+        nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+        deserunt mollit anim id est laborum. \n\n
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+        nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+        deserunt mollit anim id est laborum.</string>
+
+    <!-- values -->
+    <string name="is_schedule_on">is_schedule_on</string>
+    <string name="last_found_location">last_found_location</string>
+    <string name="secret">secret</string>
+    <string name="no_of_polygons">no_of_polygons</string>
+    <string name="shares">shares</string>
+
+    <!-- keys -->
+    <string name="str_service_schedule">Service scheduled:</string>
+    <string name="str_last_found_location">Last location:</string>
+    <string name="str_secret">Secret:</string>
+    <string name="str_no_of_polygons"># of POIs:</string>
+    <string name="str_shares">Shares:</string>
+
 </resources>

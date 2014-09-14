@@ -1,6 +1,10 @@
 package de.rwth.comsys.samrad.preserv.utilz;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import com.google.android.gms.maps.model.LatLng;
+import de.rwth.comsys.samrad.preserv.R;
 import de.rwth.comsys.samrad.preserv.model.Poly;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -92,5 +96,19 @@ public class Utilz {
         }
 
         return sb.toString();
+    }
+
+    public static void updatePref(Context context, int key,
+                                  Class<?> cls, String value) {
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+
+        if (cls == String.class) {
+            sp.edit().putString(context.getString(key), value).commit();
+        } else if (cls == boolean.class) {
+            sp.edit().putBoolean(context.getString(key), Boolean.parseBoolean(value)).commit();
+        } else if (cls == int.class) {
+            sp.edit().putInt(context.getString(key), Integer.valueOf(value)).commit();
+        }
     }
 }

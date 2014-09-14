@@ -17,9 +17,25 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.PolyUtil;
+import de.rwth.comsys.samrad.preserv.R;
+import de.rwth.comsys.samrad.preserv.model.Poly;
+import de.rwth.comsys.samrad.preserv.model.ShamirGps;
+import de.rwth.comsys.samrad.preserv.utilz.Utilz;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * Created by Sam on 9/7/2014.
+ * A service to be woken up by AlarmManager or
+ * user's interaction which listens to location
+ * updates from Google Play Service and extract
+ * the latitude and longitude.
+ *
  */
 public class PulseService extends Service implements
         LocationListener,
@@ -27,15 +43,22 @@ public class PulseService extends Service implements
         GooglePlayServicesClient.OnConnectionFailedListener {
 
     private static final String TAG = "PULSE_SERVICE";
-    private static final int BEAT_INTERVAL = 10000; // {10s} // 1000 * 60 * 5 {5m}
-    public static final String PREF_IS_ALARM_ON = "isAlarmOn";
+//    public static final String PREF_IS_ALARM_ON = "isAlarmOn";
 
     private LocationClient mLocationClient;
     private LocationRequest mLocationRequest;
 
-    private boolean locationFound =  false;
+    // List of polys
+    private List<Poly> mPolyList = new ArrayList<Poly>();
 
+    // Referenc to location
+    private Location mLocation;
+
+    // Flag to indicate Google Play Service availability
     private Boolean isServiceAvailable = false;
+
+    private double lat, lng;
+    private int counter = 0;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -46,14 +69,29 @@ public class PulseService extends Service implements
     public void onCreate() {
         super.onCreate();
 
+        Log.d(TAG, "Created");
+
+        // Lat and Lng initialization
+        lat = 0;
+        lng = 0;
+
+        // Load the JSON into polys
+        mPolyList = Utilz.json2Poly(preparePolys());
+
+        // Update Preference
+        Utilz.updatePref(this, R.string.no_of_polygons, String.class, String.valueOf(mPolyList.size()));
+
+        // Log
+        Log.d(TAG, "Poly size: " + String.valueOf(mPolyList.size()));
+
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create();
-        // Use high accuracy
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        // Set the update interval to 5 seconds
-        mLocationRequest.setInterval(RequestConstants.UPDATE_INTERVAL);
-        // Set the fastest update interval to 1 second
-        mLocationRequest.setFastestInterval(RequestConstants.FASTEST_INTERVAL);
+        // Use highest accuracy
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        // Set the update interval to 10 seconds
+        mLocationRequest.setInterval(ConfigConstants.UPDATE_INTERVAL);
+        // Set the fastest update interval to 5 seconds
+        mLocationRequest.setFastestInterval(ConfigConstants.FASTEST_INTERVAL);
 
         isServiceAvailable = servicesConnected();
         
@@ -84,17 +122,24 @@ public class PulseService extends Service implements
         super.onStartCommand(intent, flags, startId);
 
         if (isServiceAvailable && mLocationClient.isConnected()) {
-            while (!locationFound) {
-                Log.d(TAG, "Location is not found yet");
+            while (mLocation == null) {
+                Log.d(TAG, "No location found yet");
             }
 
+            return START_STICKY;
+
             // Do what it must be done with the location
-            stopSelf();
+//            Log.d(TAG, "stopSelf is supposed to be called here");
+
+//            AlarmReceiver.completeWakefulIntent(intent);
+//            stopSelf();
+//
+//            AlarmReceiver.completeWakefulIntent(intent);
         } else if (!mLocationClient.isConnected() || !mLocationClient.isConnecting()) {
             mLocationClient.connect();
         }
 
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     @Override
@@ -116,12 +161,45 @@ public class PulseService extends Service implements
     @Override
     public void onLocationChanged(Location location) {
 
-        locationFound = true;
+        counter++;
+        Log.d(TAG, "Count: " + counter);
+
+        lat = location.getLatitude();
+        lng = location.getLongitude();
+
+        /*
+         * Get 3 locations and then stop and
+         * return the most accurate one
+         */
+        if (counter < 3) {
+            if (mLocation != null && location.getAccuracy() < mLocation.getAccuracy()) {
+                lat = location.getLatitude();
+                lng = location.getLongitude();
+            }
+        } else {
+
+            // Create secret array by geo-fencing the location
+            long[] secret = geofence(lat, lng);
+
+            // Update Preference
+            Utilz.updatePref(this, R.string.last_found_location, String.class, lat + ", " + lng);
+
+            // Generate shares
+            ShamirGps.SharesMessage[] shareMessages = createShareMessages(secret);
+
+            // Log
+            Log.d(TAG, "Secret: " + Arrays.toString(shareMessages));
+
+            // Stop the service
+            stopSelf();
+        }
+
+        mLocation = location;
 
         // Report to the UI that the location was updated
-        String msg = Double.toString(location.getLatitude()) + "," +
-                Double.toString(location.getLongitude());
+        String msg = Double.toString(lat) + ", " +  Double.toString(lng);
         Log.d(TAG, "Location was found at " + msg);
+
 
     }
 
@@ -145,13 +223,15 @@ public class PulseService extends Service implements
     @Override
     public void onDestroy() {
 
-        locationFound = false;
+        mLocation = null;
 
         if(isServiceAvailable && mLocationClient != null) {
             mLocationClient.removeLocationUpdates(this);
             // Destroy the current location client
             mLocationClient = null;
         }
+
+        Log.d(TAG, "Destroyed");
         super.onDestroy();
     }
 
@@ -191,7 +271,7 @@ public class PulseService extends Service implements
 
         if (isOn) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                    System.currentTimeMillis(), BEAT_INTERVAL, pi);
+                    System.currentTimeMillis(), ConfigConstants.PULSE_INTERVAL, pi);
             Log.i(TAG, "Schedule was set");
         } else {
             alarmManager.cancel(pi);
@@ -201,8 +281,88 @@ public class PulseService extends Service implements
 
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
-                .putBoolean(PulseService.PREF_IS_ALARM_ON, isOn)
+                .putBoolean(context.getString(R.string.is_schedule_on), isOn)
                 .commit();
 
     }
+
+    private JSONObject preparePolys() {
+
+        try {
+            String jsonString = Utilz.readJSON(getFilesDir() + "/polygons.json");
+            JSONObject json = new JSONObject(jsonString);
+            return json;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /*
+     * Checks whether the location falls into
+     * any of the polygons or not.
+     *
+     * @param lat location's latitude
+     * @param lng location's longitude
+     *
+     * @return long[] containing the secret
+     */
+    private long[] geofence(double lat, double lng) {
+
+        LatLng point = new LatLng(lat, lng);
+        long[] secret = new long[mPolyList.size()];
+
+        for (int i = 0; i < mPolyList.size(); i++) {
+
+            if (PolyUtil.containsLocation(
+                    point, mPolyList.get(i).getVertexList(), true)) {
+                secret[i] = 1;
+            } else {
+                secret[i] = 0;
+            }
+        }
+
+        // Update preferences
+        Utilz.updatePref(this, R.string.secret, String.class, Arrays.toString(secret));
+        return secret;
+    }
+
+
+    private ShamirGps.SharesMessage[] createShareMessages(long[] secret) {
+
+        final ShamirGps shGps = new ShamirGps();
+        long[] scaled = Utilz.tns(secret, 3, 2);
+        long[][] shares = shGps.createShamirShares(1, 3, 9223372036854775783L, scaled);
+        final ShamirGps.SharesMessage[] shareMessages = shGps.createMsgPackMessage(shares, 9223372036854775783L);
+
+        final Runnable runnable = new Runnable() {
+            public void run() {
+                String[] peerIp = {"192.168.0.103", "192.168.0.103", "192.168.0.103"};
+                int[] peerPort = {9121, 9122, 9123};
+                shGps.shareOut(shareMessages, peerIp, peerPort);
+            }
+        };
+
+        performOnBackgroundThread(runnable);
+
+        // TEST
+//        String[] peerIp = {"192.168.0.103", "192.168.0.103", "192.168.0.103"};
+//        int[] peerPort = {9121, 9122, 9123};
+//        shGps.shareOut(shareMessages, peerIp, peerPort);
+        // TEST
+
+        // TODO Shares Preferences
+        return shareMessages;
+    }
+
+    private void changePref() {
+        getString(R.string.app_name);
+
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putBoolean(getString(R.string.app_name), false)
+                .commit();
+    }
+
 }

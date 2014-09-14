@@ -1,6 +1,8 @@
 package de.rwth.comsys.samrad.preserv.model;
 
 import mpc.ShamirSharing;
+import org.msgpack.MessagePack;
+import org.msgpack.annotation.Message;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -9,8 +11,6 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import org.msgpack.MessagePack;
-import org.msgpack.annotation.Message;
 
 /**
  * Created by Sam on 8/18/2014.

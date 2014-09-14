@@ -6,6 +6,7 @@
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:paddingBottom="@dimen/activity_vertical_margin"
+                android:background="#ff2d2d2d"
                 tools:context="de.rwth.comsys.samrad.preserv.MainActivity">
 
     <Switch
@@ -13,6 +14,24 @@
         android:layout_height="wrap_content"
         android:text="Heartbeat"
         android:id="@+id/switch1"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentLeft="true" android:textColor="#ffffffff"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/sv_container"
+        android:layout_below="@+id/switch1"
+        android:scrollbars="vertical"
+        android:layout_alignParentLeft="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_view_long"
+            android:typeface="monospace"
+            android:id="@+id/tv_terminal"
+            android:textColor="#ff747369"
+            android:background="#ff2d2d2d" />
+    </ScrollView>
+
 
 </RelativeLayout>
