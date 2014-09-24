@@ -72,11 +72,11 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="sepia" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-19.1.0" level="project" />
+    <orderEntry type="library" exported="" name="slf4j-android-1.5.8" level="project" />
+    <orderEntry type="library" exported="" name="msgpack-0.6.8" level="project" />
     <orderEntry type="library" exported="" name="support-v4-19.1.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-4.3.23" level="project" />
     <orderEntry type="library" exported="" name="android-maps-utils-0.3.1" level="project" />
-    <orderEntry type="library" name="slf4j-android-1.5.8" level="project" />
-    <orderEntry type="library" name="msgpack-0.6.8" level="project" />
   </component>
 </module>
 

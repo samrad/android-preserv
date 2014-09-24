@@ -1,3 +1,7 @@
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
+
+/*.iml
+
 # Built application files
 *.apk
 *.ap_
