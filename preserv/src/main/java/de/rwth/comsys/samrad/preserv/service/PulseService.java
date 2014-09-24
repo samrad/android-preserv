@@ -21,7 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.PolyUtil;
 import de.rwth.comsys.samrad.preserv.R;
 import de.rwth.comsys.samrad.preserv.model.Poly;
-import de.rwth.comsys.samrad.preserv.model.ShamirGps;
+import de.rwth.comsys.samrad.preserv.model.ShamirGPS;
 import de.rwth.comsys.samrad.preserv.utilz.Utilz;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -185,7 +185,7 @@ public class PulseService extends Service implements
             Utilz.updatePref(this, R.string.last_found_location, String.class, lat + ", " + lng);
 
             // Generate shares
-            ShamirGps.SharesMessage[] shareMessages = createShareMessages(secret);
+            ShamirGPS.SharesMessage[] shareMessages = createShareMessages(secret);
 
             // Log
             Log.d(TAG, "Secret: " + Arrays.toString(shareMessages));
@@ -329,28 +329,22 @@ public class PulseService extends Service implements
     }
 
 
-    private ShamirGps.SharesMessage[] createShareMessages(long[] secret) {
+    private ShamirGPS.SharesMessage[] createShareMessages(long[] secret) {
 
-        final ShamirGps shGps = new ShamirGps();
+        final ShamirGPS shGPS = new ShamirGPS(this);
         long[] scaled = Utilz.tns(secret, 3, 2);
-        long[][] shares = shGps.createShamirShares(1, 3, 9223372036854775783L, scaled);
-        final ShamirGps.SharesMessage[] shareMessages = shGps.createMsgPackMessage(shares, 9223372036854775783L);
+        long[][] shares = shGPS.createShamirShares(1, 3, 9223372036854775783L, scaled);
+        final ShamirGPS.SharesMessage[] shareMessages = shGPS.createMsgPackMessage(shares, 9223372036854775783L);
 
         final Runnable runnable = new Runnable() {
             public void run() {
-                String[] peerIp = {"192.168.0.103", "192.168.0.103", "192.168.0.103"};
+                String[] peerIp = {"192.168.0.106", "192.168.0.106", "192.168.0.106"};
                 int[] peerPort = {9121, 9122, 9123};
-                shGps.shareOut(shareMessages, peerIp, peerPort);
+                shGPS.shareOut(shareMessages, peerIp, peerPort);
             }
         };
 
         performOnBackgroundThread(runnable);
-
-        // TEST
-//        String[] peerIp = {"192.168.0.103", "192.168.0.103", "192.168.0.103"};
-//        int[] peerPort = {9121, 9122, 9123};
-//        shGps.shareOut(shareMessages, peerIp, peerPort);
-        // TEST
 
         // TODO Shares Preferences
         return shareMessages;

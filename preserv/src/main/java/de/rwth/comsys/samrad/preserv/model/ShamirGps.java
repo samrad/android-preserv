@@ -1,13 +1,27 @@
 package de.rwth.comsys.samrad.preserv.model;
 
+import android.content.Context;
+import android.util.Log;
+import de.rwth.comsys.samrad.preserv.R;
 import mpc.ShamirSharing;
 import org.msgpack.MessagePack;
 import org.msgpack.annotation.Message;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -15,9 +29,16 @@ import java.util.Random;
 /**
  * Created by Sam on 8/18/2014.
  */
-public class ShamirGps {
+public class ShamirGPS {
 
+    private static final String TAG = "SHAMIR_GPS";
     private final String RND_ALGORITHM   = "SHA1PRNG";
+    private SSLContext sslContext;
+    private Context ctx;
+
+    public ShamirGPS(Context ctx) {
+        this.ctx = ctx;
+    }
 
     /**
      * Creates the shares from given array.
@@ -82,10 +103,17 @@ public class ShamirGps {
      */
     public boolean shareOut(SharesMessage[] messages, String[] ppIPs, int[] ppPorts) {
 
+        prepareSSLContext();
+        if (sslContext == null) {
+            return false;
+        }
+
         MessagePack msgpack = new MessagePack();
 
         for(int i = 0; i < messages.length; i++) {
+
             try{
+
                 // Put SharesMessage into a map for easier handling in Python code
                 Map<String, Object> msg = new HashMap<String, Object>();
                 msg.put("type", "inputshares");
@@ -98,10 +126,10 @@ public class ShamirGps {
                 byte[] bytes = msgpack.write(msg);
 
                 // Connect to privacy peer i
-                Socket sock = new Socket(ppIPs[i], ppPorts[i]);
-                BufferedOutputStream bos = new BufferedOutputStream(sock.getOutputStream());
+//                Socket sock = new Socket(ppIPs[i], ppPorts[i]);
+                Socket sslScoket = sslContext.getSocketFactory().createSocket(ppIPs[i], ppPorts[i]);
+                BufferedOutputStream bos = new BufferedOutputStream(sslScoket.getOutputStream());
                 DataOutputStream out = new DataOutputStream(bos);
-//                DataOutputStream out = new DataOutputStream(sock.getOutputStream());
 
                 // Send message
                 out.writeInt(bytes.length);
@@ -109,24 +137,67 @@ public class ShamirGps {
                 out.write(bytes);
                 out.flush();
 
-                System.out.println("Sent " + bytes.length + " bytes");
+                // TODO Network statistic
+                Log.i(TAG, "Sent " + bytes.length + " bytes");
 
                 // Close connection
                 out.close();
-                sock.close();
+                sslScoket.close();
 
                 Thread.sleep(1000);
-            } catch(IOException e) {
 
-                System.out.println("Error connecting to privacy peer " + i + ": " + e.getMessage());
+            } catch(IOException e) {
+                Log.d(TAG, "Error connecting to privacy peer " + i + ": " + e.getMessage());
                 return false;
             } catch(InterruptedException e) {
-
-                System.out.println("Error in sleeping thread" + e.getMessage());
+                Log.d(TAG, "Error in sleeping thread" + e.getMessage());
                 return false;
             }
         }
         return true;
+    }
+
+
+    private void prepareSSLContext() {
+
+        try {
+
+            // Load CAs from an InputStream
+            // (could be from a resource or ByteArrayInputStream or ...)
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            // Load certificate from raw resources
+            InputStream caInput = ctx.getResources().openRawResource(R.raw.cert);
+            Certificate ca;
+            ca = cf.generateCertificate(caInput);
+            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+
+            // Create a KeyStore containing our trusted CAs
+            String keyStoreType = KeyStore.getDefaultType();
+            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+            keyStore.load(null, null);
+            keyStore.setCertificateEntry("ca", ca);
+
+            // Create a TrustManager that trusts the CAs in our KeyStore
+            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+            tmf.init(keyStore);
+
+            // Create an SSLContext that uses our TrustManager
+            sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, tmf.getTrustManagers(), null);
+
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Message

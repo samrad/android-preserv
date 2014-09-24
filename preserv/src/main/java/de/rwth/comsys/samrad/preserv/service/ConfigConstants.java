@@ -19,10 +19,6 @@ public class ConfigConstants {
     public static final long PULSE_INTERVAL_IN_SECOND = 60;
     // Service pulse frequency in milliseconds
     public static final long PULSE_INTERVAL = MILLISECONDS_PER_SECOND * PULSE_INTERVAL_IN_SECOND;
-    // Stores the lat / long pairs in a text file
-    public static final String LOCATION_FILE = "sdcard/location.txt";
-    // Stores the connect / disconnect data in a text file
-    public static final String LOG_FILE = "sdcard/log.txt";
 
 
     /**
