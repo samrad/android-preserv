@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.rwth.comsys.samrad.preserv" >
-    
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -19,25 +19,33 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".service.StartupReceiver">
+
+        <receiver android:name="de.rwth.comsys.samrad.preserv.service.StartupReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".service.AlarmReceiver" />
+        <receiver android:name="de.rwth.comsys.samrad.preserv.service.AlarmReceiver" />
+
         <service
-            android:name=".service.HeartbeatService"
+            android:name="de.rwth.comsys.samrad.preserv.service.HeartbeatService"
             android:exported="false" />
         <service
-            android:name=".service.PulseService"
+            android:name="de.rwth.comsys.samrad.preserv.service.PulseService"
             android:exported="false" />
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name="de.rwth.comsys.samrad.preserv.SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
     </application>
 
 </manifest>

@@ -2,8 +2,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="de.rwth.comsys.samrad.preserv.MainActivity" >
-    <item android:id="@+id/action_settings"
+    <item
+        android:id="@+id/action_settings"
         android:title="@string/action_settings"
+        android:icon="@drawable/selector_actionbar_menu_setting"
         android:orderInCategory="100"
-        app:showAsAction="never" />
+        android:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_pulse"
+        android:title="@string/action_pulse"
+        android:icon="@drawable/ic_action_pulse"
+        android:orderInCategory="99"
+        android:showAsAction="ifRoom" />
 </menu>

@@ -1,0 +1,32 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--<MultiSelectListPreference-->
+        <!--android:key="pref_polys_mask"-->
+        <!--android:dialogTitle="@string/pref_poly_mask_dialog_title"-->
+        <!--android:title="@string/pref_poly_mask_title"-->
+        <!--android:persistent="true"-->
+        <!--/>-->
+
+    <!--&lt;!&ndash; NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to-->
+         <!--dismiss it. &ndash;&gt;-->
+    <!--&lt;!&ndash; NOTE: ListPreference's summary should be set to its value by the activity code. &ndash;&gt;-->
+    <!--<ListPreference-->
+        <!--android:key="sync_frequency"-->
+        <!--android:title="@string/pref_title_sync_frequency"-->
+        <!--android:entries="@array/pref_sync_frequency_titles"-->
+        <!--android:entryValues="@array/pref_sync_frequency_values"-->
+        <!--android:defaultValue="180"-->
+        <!--android:negativeButtonText="@null"-->
+        <!--android:positiveButtonText="@null" />-->
+
+    <!--&lt;!&ndash; This preference simply launches an intent when selected. Use this UI sparingly, per-->
+         <!--design guidelines. &ndash;&gt;-->
+    <!--<Preference android:title="@string/pref_title_system_sync_settings">-->
+        <!--<intent android:action="android.settings.SYNC_SETTINGS" />-->
+    <!--</Preference>-->
+
+    <!--<Preference android:title="@string/pref_title_system_sync_settings">-->
+        <!--<intent android:action="android.settings.SYNC_SETTINGS" />-->
+    <!--</Preference>-->
+
+</PreferenceScreen>
