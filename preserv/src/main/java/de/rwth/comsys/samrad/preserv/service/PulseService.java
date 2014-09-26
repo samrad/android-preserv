@@ -79,7 +79,7 @@ public class PulseService extends Service implements
         mPolyList = Utilz.json2Poly(preparePolys());
 
         // Update Preference
-        Utilz.updatePref(this, R.string.no_of_polygons, String.class, String.valueOf(mPolyList.size()));
+        Utilz.updatePref(this, R.string.pref_no_of_polygons, String.class, String.valueOf(mPolyList.size()));
 
         // Log
         Log.d(TAG, "Poly size: " + String.valueOf(mPolyList.size()));
@@ -182,7 +182,7 @@ public class PulseService extends Service implements
             long[] secret = geofence(lat, lng);
 
             // Update Preference
-            Utilz.updatePref(this, R.string.last_found_location, String.class, lat + ", " + lng);
+            Utilz.updatePref(this, R.string.pref_last_found_location, String.class, lat + ", " + lng);
 
             // Generate shares
             ShamirGPS.SharesMessage[] shareMessages = createShareMessages(secret);
@@ -265,23 +265,30 @@ public class PulseService extends Service implements
         Log.i(TAG, "Set service alarm @" + SystemClock.elapsedRealtime());
 
         Intent i = new Intent(context, AlarmReceiver.class);
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i,
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager)
+                context.getSystemService(Context.ALARM_SERVICE);
+
+        String freqInSecond = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("pref_pulse_frequency", "60");
+        long freqInMilli = Long.parseLong(freqInSecond) * 1000;
 
         if (isOn) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                    System.currentTimeMillis(), ConfigConstants.PULSE_INTERVAL, pi);
-            Log.i(TAG, "Schedule was set");
+                    System.currentTimeMillis(), freqInMilli, pi);
+            Log.d(TAG, "Schedule was set to repeat every " +
+                    String.valueOf(freqInMilli) + " seconds");
         } else {
             alarmManager.cancel(pi);
             pi.cancel();
-            Log.i(TAG, "Schedule was unset");
+            Log.d(TAG, "Schedule was unset");
         }
 
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
-                .putBoolean(context.getString(R.string.is_schedule_on), isOn)
+                .putBoolean(context.getString(R.string.pref_is_schedule_on), isOn)
                 .commit();
 
     }
@@ -324,7 +331,7 @@ public class PulseService extends Service implements
         }
 
         // Update preferences
-        Utilz.updatePref(this, R.string.secret, String.class, Arrays.toString(secret));
+        Utilz.updatePref(this, R.string.pref_secret, String.class, Arrays.toString(secret));
         return secret;
     }
 
@@ -338,8 +345,8 @@ public class PulseService extends Service implements
 
         final Runnable runnable = new Runnable() {
             public void run() {
-                String[] peerIp = {"192.168.0.106", "192.168.0.106", "192.168.0.106"};
-                int[] peerPort = {9121, 9122, 9123};
+                String[] peerIp = Utilz.getPrivacyPeersIp(PulseService.this);
+                int[] peerPort = Utilz.getPrivacyPeersPort(PulseService.this);
                 shGPS.shareOut(shareMessages, peerIp, peerPort);
             }
         };

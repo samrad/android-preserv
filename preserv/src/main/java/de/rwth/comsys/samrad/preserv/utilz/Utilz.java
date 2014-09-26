@@ -111,4 +111,41 @@ public class Utilz {
             sp.edit().putInt(context.getString(key), Integer.valueOf(value)).commit();
         }
     }
+
+    public static String[] getPrivacyPeersIp(Context context) {
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        String ip1 = sp.getString("pref_privacypeer1",
+                context.getString(R.string.pref_privacypeer_default1)).split(":")[0];
+        String ip2 = sp.getString("pref_privacypeer2",
+                context.getString(R.string.pref_privacypeer_default2)).split(":")[0];
+        String ip3 = sp.getString("pref_privacypeer3",
+                context.getString(R.string.pref_privacypeer_default3)).split(":")[0];
+
+        String[] result = {ip1, ip2, ip3};
+        return result;
+    }
+
+    public static int[] getPrivacyPeersPort(Context context) {
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        String port1 = sp.getString("pref_privacypeer1",
+                context.getString(R.string.pref_privacypeer_default1)).split(":")[1];
+        String port2 = sp.getString("pref_privacypeer2",
+                context.getString(R.string.pref_privacypeer_default2)).split(":")[1];
+        String port3 = sp.getString("pref_privacypeer3",
+                context.getString(R.string.pref_privacypeer_default3)).split(":")[1];
+
+        int[] result = {Integer.parseInt(port1),
+                Integer.parseInt(port2),
+                Integer.parseInt(port3)};
+        return result;
+    }
+
+    public static long[] getPoiMask(Context context) {
+
+        // TODO to be completed
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return null;
+    }
 }
