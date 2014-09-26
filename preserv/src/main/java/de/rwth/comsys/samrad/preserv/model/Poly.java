@@ -21,6 +21,10 @@ public class Poly {
         vertexList = new ArrayList<LatLng>();
     }
 
+    public String getName() {
+        return this.name;
+    }
+
     public void addVertex(LatLng v) {
         vertexList.add(v);
     }
