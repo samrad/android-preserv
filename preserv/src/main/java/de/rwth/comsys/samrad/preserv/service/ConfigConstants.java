@@ -6,7 +6,7 @@ package de.rwth.comsys.samrad.preserv.service;
 public class ConfigConstants {
 
     // Milliseconds per second
-    private static final int MILLISECONDS_PER_SECOND = 1000;
+    public static final int MILLISECONDS_PER_SECOND = 1000;
     // Update frequency in seconds
     private static final int UPDATE_INTERVAL_IN_SECONDS = 10;
     // Update frequency in milliseconds

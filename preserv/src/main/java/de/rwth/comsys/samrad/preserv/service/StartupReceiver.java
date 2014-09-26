@@ -23,7 +23,7 @@ public class StartupReceiver extends BroadcastReceiver {
         Log.i(TAG, "Received broadcast intent: " + intent.getAction());
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean isOn = prefs.getBoolean(context.getString(R.string.is_schedule_on), false);
+        boolean isOn = prefs.getBoolean(context.getString(R.string.pref_is_schedule_on), false);
         PulseService.setServiceAlarm(context, isOn);
 
     }

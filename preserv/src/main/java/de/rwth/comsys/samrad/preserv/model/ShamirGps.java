@@ -144,6 +144,8 @@ public class ShamirGPS {
                 out.close();
                 sslScoket.close();
 
+                Log.d(TAG, "Successfully Sent to " + ppIPs[i] + ":" + ppPorts[i]);
+
                 Thread.sleep(1000);
 
             } catch(IOException e) {
