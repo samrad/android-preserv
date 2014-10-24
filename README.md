@@ -24,5 +24,10 @@ The service execution interval and PrivacyPeers' IPs and Ports are configurable 
 **TODO**:
  - [ ] There is also another option for POI opt-out in settings to let the user decide which POI (polygon) he/she would like to be opted-out but it lacks the functionality.
 
-
+[msgpack-0.6.8]:http://repo1.maven.org/maven2/org/msgpack/msgpack/0.6.8/msgpack-0.6.8.jar
+[sepia-0.9.1]:http://sepia.ee.ethz.ch/download/v0.9.1/sepia.jar
+[slf4j-android-1.5.8]:https://code.google.com/p/osmdroid/source/browse/trunk/OpenStreetMapViewer/lib/slf4j-android-1.5.8.jar?r=225
+[android-maps-utils-0.3]:https://github.com/googlemaps/android-maps-utils
+[Android Dashboard]:https://developer.android.com/about/dashboards/index.html
+[Google Play Services]:https://developer.android.com/google/play-services/index.html
 [img-setting]:https://dl.dropboxusercontent.com/u/169649705/Henrik/screenshot-settings.png  "Settings activity"
