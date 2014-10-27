@@ -21,9 +21,9 @@ The service execution interval and PrivacyPeers' IPs and Ports are configurable 
 
 ![Settings][img-setting]
 
-## Screenshots
-[img-main-activity]
-[img-setting-full]
+###### Screenshots
+![Main][img-main-activity]
+![Settings][img-setting-full]
 
 **TODO**:
  - [ ] There is also another option for POI opt-out in settings to let the user decide which POI (polygon) he/she would like to be opted-out but it lacks the functionality.
