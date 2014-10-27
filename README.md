@@ -21,6 +21,10 @@ The service execution interval and PrivacyPeers' IPs and Ports are configurable 
 
 ![Settings][img-setting]
 
+## Screenshots
+[img-main-activity]
+[img-setting-full]
+
 **TODO**:
  - [ ] There is also another option for POI opt-out in settings to let the user decide which POI (polygon) he/she would like to be opted-out but it lacks the functionality.
 
@@ -31,3 +35,5 @@ The service execution interval and PrivacyPeers' IPs and Ports are configurable 
 [Android Dashboard]:https://developer.android.com/about/dashboards/index.html
 [Google Play Services]:https://developer.android.com/google/play-services/index.html
 [img-setting]:https://dl.dropboxusercontent.com/u/169649705/Henrik/screenshot-settings.png  "Settings activity"
+[img-main-activity]:https://dl.dropboxusercontent.com/u/169649705/Henrik/screenshot-main.png "Main activity"
+[img-setting-full]:https://dl.dropboxusercontent.com/u/169649705/Henrik/screenshot-settings-full.png "Settings activity"
